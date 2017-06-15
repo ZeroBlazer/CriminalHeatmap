@@ -24,16 +24,6 @@ struct GeoRecord {
     lng: f64,
 }
 
-// impl Clone for GeoRecord {
-//     fn clone(&self) -> GeoRecord {
-//         GeoRecord {
-//             record: self.record.clone(),
-//             lat: self.lat,
-//             lng: self.lng
-//         }
-//     }
-// }
-
 fn read_records_from(path: &str, vec: &mut Vec<GeoRecord>) {
     let rdr = Csv::from_file(path).unwrap().has_header(true);
     for row in rdr.into_iter() {
