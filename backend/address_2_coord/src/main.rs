@@ -48,6 +48,16 @@ fn write_records_to(path: &str, vec: &mut Vec<GeoRecord>) {
     }
 }
 
+fn get_coordinates(vec: &mut Vec<GeoRecord>) {
+    for record in vec.into_iter() {
+        println!("http://maps.google.com/maps/api/geocode/json?address={},%20AT", record.record.values[10]);
+    }
+}
+
+// fn coords() -> (f32, f32) {
+//     unimplemented!()
+// }
+
 fn get_json_from(url: &str) -> Vec<u8> {
     let mut core = Core::new().unwrap();
     let client = Client::new(&core.handle());
@@ -71,6 +81,7 @@ fn main() {
 
     let mut records = Vec::new();
     read_records_from("../../data/COBRA-YTD2017.csv", &mut records);
+    get_coordinates(&mut records);
     write_records_to("../../data/out.csv", &mut records);
     // println!("{:?}", records);
 }
