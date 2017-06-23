@@ -1,17 +1,12 @@
 extern crate rustc_serialize;
 extern crate quick_csv;
 extern crate csv;
-extern crate futures;
-extern crate hyper;
-extern crate tokio_core;
+extern crate reqwest;
 extern crate serde_json;
 
 use quick_csv::Csv;
-
-use std::io::{self, Write};
-use futures::{Future, Stream};
-use hyper::Client;
-use tokio_core::reactor::Core;
+use serde_json::Value;
+use std::io::{self, Write, Read};
 
 #[derive(Debug, RustcDecodable, RustcEncodable, Clone)]
 struct Record {
@@ -33,7 +28,7 @@ fn read_records_from(path: &str, vec: &mut Vec<GeoRecord>) {
                 let geo_rec = GeoRecord {
                     record: cols,
                     lat: 0.0,
-                    lng: 0.0
+                    lng: 0.0,
                 };
                 vec.push(geo_rec);
             }
@@ -50,40 +45,46 @@ fn write_records_to(path: &str, vec: &mut Vec<GeoRecord>) {
 }
 
 fn get_coordinates(vec: &mut Vec<GeoRecord>) {
-    for record in vec.into_iter() {
-        println!("http://maps.google.com/maps/api/geocode/json?address={},%20AT", record.record.values[10]);
+    for (i, record) in vec.into_iter().enumerate() {
+        print!("{}> ", i);
+        (record.lat, record.lng) =
+            coords(format!("http://maps.google.com/maps/api/geocode/json?address={},%20Atlanta",
+                           record.record.values[10])
+                           .as_ref());
+        // record.lat = lat;
+        // record.lng = lng;
     }
 }
 
-// fn coords() -> (f32, f32) {
-//     unimplemented!()
-// }
+fn get_json_from(url: &str) -> String {
+    let mut response = reqwest::get(url).expect("Failed to send request");
+    println!("{}", response.status());
 
-fn get_json_from(url: &str) -> Vec<u8> {
-    let mut core = Core::new().unwrap();
-    let client = Client::new(&core.handle());
-    let out = Vec::new();
+    let mut buf = String::new();
+    response.read_to_string(&mut buf).ok();
+    buf
+}
 
-    let uri = url.parse().unwrap();
-    let work = client.get(uri).and_then(|res| {
-        println!("Response: {}", res.status());
-
-        res.body().for_each(|chunk| {
-            // let json = serde_json::from_slice((&chunk).map(|_| ())).unwrap();
-            // out = chunk.first();
-            io::stdout().write_all(&chunk).map(|_| ()).map_err(From::from)
-        })
-    });
-    core.run(work).unwrap();
-    out
+fn coords(url: &str) -> (f64, f64) {
+    let json = get_json_from(url);
+    let r: Value = serde_json::from_str(json.as_ref()).unwrap();
+    match r["results"][0]["geometry"]["location"] {
+        Value::Object(ref location) => {
+            (location["lat"].as_f64().unwrap(), location["lng"].as_f64().unwrap())
+        }
+        _ => {
+            println!("Not so good: {}", url);
+            (0.0, 0.0)
+        }
+    }
+    // let location = &r["results"][0]["geometry"]["location"];
+    // println!("{:#?}", location);
+    // (location["lat"].as_f64().unwrap(), location["lng"].as_f64().unwrap())
 }
 
 fn main() {
-    get_json_from("http://maps.google.com/maps/api/geocode/json?address=78%20MARIETTA%20ST,%20AT");
-
     let mut records = Vec::new();
     read_records_from("../../data/COBRA-YTD2017.csv", &mut records);
     get_coordinates(&mut records);
     write_records_to("../../data/out.csv", &mut records);
-    // println!("{:?}", records);
 }
