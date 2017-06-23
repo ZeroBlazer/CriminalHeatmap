@@ -46,7 +46,9 @@ fn write_records_to(path: &str, vec: &mut Vec<GeoRecord>) {
 
 fn get_coordinates(vec: &mut Vec<GeoRecord>) {
     for record in vec.into_iter() {
-        coords(format!("http://maps.google.com/maps/api/geocode/json?address={},%20Atlanta", record.record.values[10]).as_ref());
+        let (lat, lng) = coords(format!("http://maps.google.com/maps/api/geocode/json?address={},%20Atlanta", record.record.values[10]).as_ref());
+        record.lat = lat;
+        record.lng = lng;
     }
 }
 
@@ -59,23 +61,16 @@ fn get_json_from(url: &str) -> String {
     buf
 }
 
-fn coords(url: &str) -> (f32, f32) {
+fn coords(url: &str) -> (f64, f64) {
     let json = get_json_from(url);
     let r: Value = serde_json::from_str(json.as_ref()).unwrap();
     let location = &r["results"][0]["geometry"]["location"];
-    println!("({}, {})", location["lat"],
-                         location["lng"]);
-    // println!("{:#?}", location);
-    (3.14, 2.15)
+    (location["lat"].as_f64().unwrap(), location["lng"].as_f64().unwrap())
 }
 
 fn main() {
-    // let st = get_json_from("http://maps.google.com/maps/api/geocode/json?address=78%20MARIETTA%20ST,%20AT");
-    // println!("{}", st);
-
     let mut records = Vec::new();
     read_records_from("../../data/COBRA-YTD2017.csv", &mut records);
     get_coordinates(&mut records);
     write_records_to("../../data/out.csv", &mut records);
-    // println!("{:?}", records);
 }
