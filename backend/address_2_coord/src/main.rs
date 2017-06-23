@@ -1,16 +1,11 @@
 extern crate rustc_serialize;
 extern crate quick_csv;
 extern crate csv;
-extern crate futures;
-extern crate hyper;
-extern crate tokio_core;
+extern crate reqwest;
 
 use quick_csv::Csv;
 
-use std::io::{self, Write};
-use futures::{Future, Stream};
-use hyper::Client;
-use tokio_core::reactor::Core;
+use std::io::{self, Write, Read};
 
 #[derive(Debug, RustcDecodable, RustcEncodable, Clone)]
 struct Record {
@@ -50,34 +45,27 @@ fn write_records_to(path: &str, vec: &mut Vec<GeoRecord>) {
 
 fn get_coordinates(vec: &mut Vec<GeoRecord>) {
     for record in vec.into_iter() {
+
         println!("http://maps.google.com/maps/api/geocode/json?address={},%20AT", record.record.values[10]);
     }
 }
 
-// fn coords() -> (f32, f32) {
-//     unimplemented!()
-// }
+fn get_json_from(url: &str) -> String {
+    let mut response = reqwest::get(url).expect("Failed to send request");
+    println!("{}", response.status());
+    
+    let mut buf = String::new();
+    response.read_to_string(&mut buf).ok();
+    buf
+}
 
-fn get_json_from(url: &str) -> Vec<u8> {
-    let mut core = Core::new().unwrap();
-    let client = Client::new(&core.handle());
-    let out = Vec::new();
-
-    let uri = url.parse().unwrap();
-    let work = client.get(uri).and_then(|res| {
-        println!("Response: {}", res.status());
-
-        res.body().for_each(|chunk| {
-            // out = chunk.first();
-            io::stdout().write_all(&chunk).map(|_| ()).map_err(From::from)
-        })
-    });
-    core.run(work).unwrap();
-    out
+fn coords(url: &str) -> (f32, f32) {
+    
 }
 
 fn main() {
-    get_json_from("http://maps.google.com/maps/api/geocode/json?address=78%20MARIETTA%20ST,%20AT");
+    let st = get_json_from("http://maps.google.com/maps/api/geocode/json?address=78%20MARIETTA%20ST,%20AT");
+    println!("{}", st);
 
     let mut records = Vec::new();
     read_records_from("../../data/COBRA-YTD2017.csv", &mut records);
