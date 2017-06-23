@@ -2,6 +2,7 @@ extern crate rustc_serialize;
 extern crate quick_csv;
 extern crate csv;
 extern crate reqwest;
+extern crate serde_json;
 
 use quick_csv::Csv;
 
@@ -59,13 +60,13 @@ fn get_json_from(url: &str) -> String {
     buf
 }
 
-fn coords(url: &str) -> (f32, f32) {
+// fn coords(url: &str) -> (f32, f32) {
     
-}
+// }
 
 fn main() {
-    let st = get_json_from("http://maps.google.com/maps/api/geocode/json?address=78%20MARIETTA%20ST,%20AT");
-    println!("{}", st);
+    // let st = get_json_from("http://maps.google.com/maps/api/geocode/json?address=78%20MARIETTA%20ST,%20AT");
+    // println!("{}", st);
 
     let mut records = Vec::new();
     read_records_from("../../data/COBRA-YTD2017.csv", &mut records);
