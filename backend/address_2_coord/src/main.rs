@@ -47,12 +47,12 @@ fn write_records_to(path: &str, vec: &mut Vec<GeoRecord>) {
 fn get_coordinates(vec: &mut Vec<GeoRecord>) {
     for (i, record) in vec.into_iter().enumerate() {
         print!("{}> ", i);
-        (record.lat, record.lng) =
+        let (lat, lng) =
             coords(format!("http://maps.google.com/maps/api/geocode/json?address={},%20Atlanta",
                            record.record.values[10])
                            .as_ref());
-        // record.lat = lat;
-        // record.lng = lng;
+        record.lat = lat;
+        record.lng = lng;
     }
 }
 
