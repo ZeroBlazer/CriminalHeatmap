@@ -48,7 +48,7 @@ fn get_coordinates(vec: &mut Vec<GeoRecord>) {
     for (i, record) in vec.into_iter().enumerate() {
         print!("{}> ", i);
         let (lat, lng) =
-            coords(format!("http://maps.google.com/maps/api/geocode/json?address={},%20Atlanta",
+            coords(format!("https://maps.google.com/maps/api/geocode/json?address={},%20Atlanta,GA&key=AIzaSyAuwf-jxMOVTpEzdUf3BnmR8__f18IXFpg",
                            record.record.values[10])
                            .as_ref());
         record.lat = lat;
