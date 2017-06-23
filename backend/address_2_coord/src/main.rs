@@ -4,6 +4,7 @@ extern crate csv;
 extern crate futures;
 extern crate hyper;
 extern crate tokio_core;
+extern crate serde_json;
 
 use quick_csv::Csv;
 
@@ -68,6 +69,7 @@ fn get_json_from(url: &str) -> Vec<u8> {
         println!("Response: {}", res.status());
 
         res.body().for_each(|chunk| {
+            // let json = serde_json::from_slice((&chunk).map(|_| ())).unwrap();
             // out = chunk.first();
             io::stdout().write_all(&chunk).map(|_| ()).map_err(From::from)
         })
