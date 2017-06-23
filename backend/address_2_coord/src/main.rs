@@ -5,7 +5,7 @@ extern crate reqwest;
 extern crate serde_json;
 
 use quick_csv::Csv;
-
+use serde_json::Value;
 use std::io::{self, Write, Read};
 
 #[derive(Debug, RustcDecodable, RustcEncodable, Clone)]
@@ -46,8 +46,7 @@ fn write_records_to(path: &str, vec: &mut Vec<GeoRecord>) {
 
 fn get_coordinates(vec: &mut Vec<GeoRecord>) {
     for record in vec.into_iter() {
-
-        println!("http://maps.google.com/maps/api/geocode/json?address={},%20AT", record.record.values[10]);
+        coords(format!("http://maps.google.com/maps/api/geocode/json?address={},%20Atlanta", record.record.values[10]).as_ref());
     }
 }
 
@@ -60,9 +59,15 @@ fn get_json_from(url: &str) -> String {
     buf
 }
 
-// fn coords(url: &str) -> (f32, f32) {
-    
-// }
+fn coords(url: &str) -> (f32, f32) {
+    let json = get_json_from(url);
+    let r: Value = serde_json::from_str(json.as_ref()).unwrap();
+    let location = &r["results"][0]["geometry"]["location"];
+    println!("({}, {})", location["lat"],
+                         location["lng"]);
+    // println!("{:#?}", location);
+    (3.14, 2.15)
+}
 
 fn main() {
     // let st = get_json_from("http://maps.google.com/maps/api/geocode/json?address=78%20MARIETTA%20ST,%20AT");
