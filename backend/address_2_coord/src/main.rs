@@ -48,7 +48,8 @@ fn get_coordinates(vec: &mut Vec<GeoRecord>) {
     for (i, record) in vec.into_iter().enumerate() {
         print!("{}> ", i);
         let (lat, lng) =
-            coords(format!("https://maps.google.com/maps/api/geocode/json?address={},%20Atlanta,GA&key=AIzaSyAuwf-jxMOVTpEzdUf3BnmR8__f18IXFpg",
+            // coords(format!("https://maps.google.com/maps/api/geocode/json?address={},%20Atlanta,GA&key=AIzaSyAuwf-jxMOVTpEzdUf3BnmR8__f18IXFpg",
+            coords(format!("https://maps.google.com/maps/api/geocode/json?address={},%20Atlanta,GA",
                            record.record.values[10])
                            .as_ref());
         record.lat = lat;
@@ -84,7 +85,7 @@ fn coords(url: &str) -> (f64, f64) {
 
 fn main() {
     let mut records = Vec::new();
-    read_records_from("../../data/COBRA-YTD2017.csv", &mut records);
+    read_records_from("../../data/x02", &mut records);
     get_coordinates(&mut records);
-    write_records_to("../../data/out.csv", &mut records);
+    write_records_to("../../data/out_x02.csv", &mut records);
 }
