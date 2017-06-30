@@ -5,3 +5,4 @@ authors = ["Elías Puma <elpumitaelias@gmail.com>"]
 
 [dependencies]
 iron = "0.5.1"
+geojson={version="*"}

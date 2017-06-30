@@ -1,5 +1,7 @@
 extern crate iron;
+extern crate geojson;
 
+use geojson::GeoJson;
 use iron::prelude::*;
 use iron::status;
 
