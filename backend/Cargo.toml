@@ -8,3 +8,5 @@ iron = "0.5.1"
 serde = "1.0.9"
 record = { path = "../libs/record/" }
 kernel = { path = "../libs/kernel/" }
+csv = "0.14"
+rustc-serialize = "0.3.24"

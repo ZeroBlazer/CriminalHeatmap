@@ -36,6 +36,10 @@ impl Record {
         
         dt
     }
+
+    pub fn get_lat_lon(&self) -> (String, String) {
+        (self.values[22].clone(), self.values[21].clone())
+    }
 }
 
 pub fn read_records_from(path: &str) -> Vec<Record> {
