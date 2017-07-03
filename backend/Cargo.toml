@@ -1,8 +1,10 @@
 [package]
 name = "criminal_heatmap"
-version = "0.1.0"
+version = "0.8.0"
 authors = ["Elías Puma <elpumitaelias@gmail.com>"]
 
 [dependencies]
 iron = "0.5.1"
-geojson={version="*"}
+serde = "1.0.9"
+record = { path = "../libs/record/" }
+kernel = { path = "../libs/kernel/" }
