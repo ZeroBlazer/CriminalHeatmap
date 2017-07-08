@@ -49,9 +49,9 @@ pub fn kernel_sum(record: &Record, curr: &NaiveDateTime) -> f64 {
 
     // println!("{}\t{}\t{}", d_t, d_w, d_s);
 
-    sum += kernel(d_t, 3.0) * 2.0 / 5.0; //hours
-    sum += kernel(d_w, 2.0) * 2.0 / 5.0; //days
-    sum += kernel(d_s, 6.0) / 5.0; //weeks
+    sum += kernel(d_t, 3.0) * 2.0 / 5.0;        //hours
+    sum += kernel(d_w, 2.0) * 2.0 / 5.0;        //days
+    sum += kernel(d_s, 6.0) / 5.0;              //weeks
 
     sum
 }

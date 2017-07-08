@@ -13,10 +13,10 @@ pub struct Record {
 
 impl Record {
     pub fn get_date_time(&self) -> NaiveDateTime {
-        // println!("D: {}, T: {}, WD: {}",
-        //          self.values[3],
-        //          self.values[4],
-        //          self.values[16]);
+        println!("D: {}, T: {}, WD: {}",
+                 self.values[3],
+                 self.values[4],
+                 self.values[16]);
         let date: Vec<&str> = self.values[3].split("/").collect();
         let mut time: Vec<&str> = self.values[4].split(":").collect();
         
