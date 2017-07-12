@@ -1,7 +1,7 @@
 extern crate chrono;
 extern crate record;
 
-use chrono::{Local, DateTime, NaiveDateTime};
+use chrono::{Local, DateTime, NaiveDateTime, Duration};
 use record::Record;
 
 pub fn current_time() -> NaiveDateTime {
@@ -11,7 +11,15 @@ pub fn current_time() -> NaiveDateTime {
     local.naive_local()
 }
 
-pub fn kernel(d: f64, h: f64) -> f64 {
+pub fn weeks_ago(weeks: i64) -> NaiveDateTime {
+    let local: DateTime<Local> = Local::now();
+    let mut past = local.naive_local();
+    past -= Duration::weeks(weeks);
+    past
+}
+
+//Bisquare kernel
+pub fn bs_kernel(d: f64, h: f64) -> f64 {
     if d < h {
         (1.0 - (d.powf(2.0) / h.powf(2.0))).powf(2.0)
     } else {
@@ -49,9 +57,9 @@ pub fn kernel_sum(record: &Record, curr: &NaiveDateTime) -> f64 {
 
     // println!("{}\t{}\t{}", d_t, d_w, d_s);
 
-    sum += kernel(d_t, 3.0) * 2.0 / 5.0;        //hours
-    sum += kernel(d_w, 2.0) * 2.0 / 5.0;        //days
-    sum += kernel(d_s, 6.0) / 5.0;              //weeks
+    sum += bs_kernel(d_t, 3.0) * 2.0 / 5.0;        //hours
+    sum += bs_kernel(d_w, 2.0) * 2.0 / 5.0;        //days
+    sum += bs_kernel(d_s, 6.0) / 5.0;              //weeks
 
     sum
 }
