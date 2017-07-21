@@ -8,3 +8,4 @@ serde = "1.0.9"
 quick-csv = "0.1.6"
 rustc-serialize = "0.3.24"
 chrono = { version = "0.4", features = ["serde"] }
+cogset = "0.2"
