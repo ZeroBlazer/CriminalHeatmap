@@ -15,7 +15,7 @@ fn main() {
     // let ker_sum = kernel::kernel_sum(&rec[10000], &curr_time);
     // println!("{}", ker_sum);
     let mut wtr = csv::Writer::from_file("../frontend/kde.csv").unwrap();
-    for (i, rec) in records.iter()/*.skip(20000).take(20)*/.enumerate() {
+    for (i, rec) in records.iter().enumerate() {
         let ker_sum = kernel::kernel_sum(&rec, &curr_time);
         if ker_sum > 0.6 {
             println!("{}> {}\n", i, ker_sum);
