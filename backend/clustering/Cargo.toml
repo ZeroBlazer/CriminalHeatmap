@@ -11,3 +11,4 @@ clustering = { path = "../../libs/clustering/" }
 csv = "0.14"
 rustc-serialize = "0.3.24"
 cogset = "0.2"
+geojson = "0.8.1"

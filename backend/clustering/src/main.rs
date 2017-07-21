@@ -4,9 +4,11 @@ extern crate clustering;
 extern crate rustc_serialize;
 extern crate csv;
 extern crate cogset;
+extern crate geojson;
 
 use std::collections::Bound::Included;
 use cogset::{Dbscan, BruteScan, Euclid};
+use geojson::{Feature, GeoJson, Geometry, Value};
 
 fn main() {
     let curr_time = kernel::current_time(); // Current Time
@@ -17,17 +19,32 @@ fn main() {
 
     let range_records = tree.range((Included(&bound_time), Included(&curr_time))); // Filter records in range
     /************************CLUSTERING***********************/
-    let query_records: Vec<record::Record> = range_records.map(|(_, &r)| r.clone()).collect(); // Vec containing cloned query records
-    let scanner = BruteScan::new(&query_records);
-    let mut dbscan = Dbscan::new(scanner, 0.01, 5);
+    // let query_records: Vec<record::Record> = range_records.map(|(_, &r)| r.clone()).collect(); // Vec containing cloned query records
+    // let scanner = BruteScan::new(&query_records);
+    // let mut dbscan = Dbscan::new(scanner, 0.01, 5);
 
-    let clusters = dbscan.by_ref().collect::<Vec<_>>();
-    /**********************************************************/
-    for (i, cluster) in clusters.iter().enumerate() {
-        println!("\nCLUSTER {}>", i);
-        for elem_idx in cluster {
-            println!("- {:?}", query_records[*elem_idx].get_lat_lon());
-        }
-    }
+    // let clusters = dbscan.by_ref().collect::<Vec<_>>();
+    // /**********************************************************/
+    // for (i, cluster) in clusters.iter().enumerate() {
+    //     println!("\nCLUSTER {}>", i);
+    //     for elem_idx in cluster {
+    //         println!("- {:?}", query_records[*elem_idx].get_lat_lon());
+    //     }
+    // }
     // println!("{:#?}", clusters);
+
+    /**********************************************************/    
+    let geometry = Geometry::new(
+        Value::Point(vec![-120.66029,35.2812])
+    );
+
+    let geojson = GeoJson::Feature(Feature {
+        bbox: None,
+        geometry: Some(geometry),
+        foreign_members: None,
+        id: None,
+        properties: None,
+    });
+
+    println!("{}", geojson.to_string());
 }
