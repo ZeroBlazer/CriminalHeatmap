@@ -7,18 +7,18 @@
   <link rel="stylesheet" type="text/css" href="style.css" media="screen" />
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAuwf-jxMOVTpEzdUf3BnmR8__f18IXFpg&libraries=visualization&callback=initMap">
   </script>
+  <script type='text/javascript' src="./script.js">
+  </script>
 </head>
 
 <body>
-   <div id="floating-panel">
+  <div id="floating-panel">
     <button onclick="toggleHeatmap()">Toggle Heatmap</button>
-    <button onclick="changeGradient()">Change gradient</button>
+    <!-- <button onclick="changeGradient()">Change gradient</button> -->
     <button onclick="changeRadius()">Change radius</button>
     <button onclick="changeOpacity()">Change opacity</button>
-  </div> 
+  </div>
   <div id="map"></div>
-  <script type='text/javascript' src="./script.js">
-  </script>
 </body>
 
 </html>

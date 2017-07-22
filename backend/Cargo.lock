@@ -39,6 +39,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "cogset"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "order-stat 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "conduit-mime-types"
 version = "0.7.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -210,6 +218,11 @@ dependencies = [
 ]
 
 [[package]]
+name = "order-stat"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
 name = "percent-encoding"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -235,6 +248,7 @@ name = "record"
 version = "0.1.0"
 dependencies = [
  "chrono 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "cogset 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "quick-csv 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "rustc-serialize 0.3.24 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.9 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -343,6 +357,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum byteorder 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)" = "0fc10e8cc6b2580fda3f36eb6dc5316657f812a3df879a44a66fc9f0fdbc4855"
 "checksum byteorder 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "c40977b0ee6b9885c9013cd41d9feffdd22deb3bb4dc3a71d901cc7a77de18c8"
 "checksum chrono 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "7c20ebe0b2b08b0aeddba49c609fe7957ba2e33449882cb186a180bc60682fa9"
+"checksum cogset 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "7f2ac61b949c02940a4e2a3a6de8253d22f8336b1376386aa5189d05b800f086"
 "checksum conduit-mime-types 0.7.3 (registry+https://github.com/rust-lang/crates.io-index)" = "95ca30253581af809925ef68c2641cc140d6183f43e12e0af4992d53768bd7b8"
 "checksum csv 0.14.7 (registry+https://github.com/rust-lang/crates.io-index)" = "266c1815d7ca63a5bd86284043faf91e8c95e943e55ce05dc0ae08e952de18bc"
 "checksum error 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)" = "a6e606f14042bb87cc02ef6a14db6c90ab92ed6f62d87e69377bc759fd7987cc"
@@ -363,6 +378,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum num-iter 0.1.33 (registry+https://github.com/rust-lang/crates.io-index)" = "f7d1891bd7b936f12349b7d1403761c8a0b85a18b148e9da4429d5d102c1a41e"
 "checksum num-traits 0.1.39 (registry+https://github.com/rust-lang/crates.io-index)" = "1708c0628602a98b52fad936cf3edb9a107af06e52e49fdf0707e884456a6af6"
 "checksum num_cpus 1.6.2 (registry+https://github.com/rust-lang/crates.io-index)" = "aec53c34f2d0247c5ca5d32cca1478762f301740468ee9ee6dcb7a0dd7a0c584"
+"checksum order-stat 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)" = "efa535d5117d3661134dbf1719b6f0ffe06f2375843b13935db186cd094105eb"
 "checksum percent-encoding 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "de154f638187706bde41d9b4738748933d64e6b37bdbffc0b47a97d16a6ae356"
 "checksum plugin 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)" = "1a6a0dc3910bc8db877ffed8e457763b317cf880df4ae19109b9f77d277cf6e0"
 "checksum quick-csv 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)" = "edf4b7701db7d2e4c9c010f21eebd8676a50f79223a0cf858162d24bff47338c"
