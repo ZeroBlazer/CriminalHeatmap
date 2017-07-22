@@ -19,19 +19,19 @@ fn main() {
 
     let range_records = tree.range((Included(&bound_time), Included(&curr_time))); // Filter records in range
     /************************CLUSTERING***********************/
-    // let query_records: Vec<record::Record> = range_records.map(|(_, &r)| r.clone()).collect(); // Vec containing cloned query records
-    // let scanner = BruteScan::new(&query_records);
-    // let mut dbscan = Dbscan::new(scanner, 0.01, 5);
+    let query_records: Vec<record::Record> = range_records.map(|(_, &r)| r.clone()).collect(); // Vec containing cloned query records
+    let scanner = BruteScan::new(&query_records);
+    let mut dbscan = Dbscan::new(scanner, 0.01, 5);
 
-    // let clusters = dbscan.by_ref().collect::<Vec<_>>();
-    // /**********************************************************/
-    // for (i, cluster) in clusters.iter().enumerate() {
-    //     println!("\nCLUSTER {}>", i);
-    //     for elem_idx in cluster {
-    //         println!("- {:?}", query_records[*elem_idx].get_lat_lon());
-    //     }
-    // }
-    // println!("{:#?}", clusters);
+    let clusters = dbscan.by_ref().collect::<Vec<_>>();
+    /**********************************************************/
+    for (i, cluster) in clusters.iter().enumerate() {
+        println!("\nCLUSTER {}>", i);
+        for elem_idx in cluster {
+            println!("- {:?}", query_records[*elem_idx].get_lat_lon());
+        }
+    }
+    println!("{:#?}", clusters);
 
     /**********************************************************/    
     let geometry = Geometry::new(

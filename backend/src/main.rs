@@ -1,31 +1,23 @@
 extern crate record;
 extern crate kernel;
-/************************************************************************/
-extern crate rustc_serialize;
-extern crate csv;
+extern crate clustering;
 
-#[derive(RustcEncodable)]
-pub struct NaiveRecord(String, String, f64);
-/************************************************************************/
+use std::collections::Bound::Included;
 use std::io::prelude::*;
 use std::fs::File;
-/************************************************************************/
+
 fn main() {
-    let curr_time = kernel::current_time();
-    let records = record::read_records_from("../data/data1617.csv");
-    // let filtrd: Vec<(String, String, f64)> = Vec::new();
+    let week_range = 90;
+    let threshold = 0.4;
+    /*****************************LOAD RECORDS*******************************/
+    let records = record::read_records_from("../data/data1617.csv"); // Load records
+    let tree = clustering::make_record_tree(&records); // Store records in a BTree
+    /****************************FILTER RECORDS******************************/
+    let curr_time = kernel::current_time(); // Current Time
+    let bound_time = kernel::weeks_ago(week_range); // Current Time - x Weeks
 
-    // let mut wtr = csv::Writer::from_file("../frontend/kde.csv").unwrap();
-    // for (i, rec) in records.iter().enumerate() {
-    //     let ker_sum = kernel::kernel_sum(&rec, &curr_time);
-    //     if ker_sum > 0.6 {
-    //         println!("{}> {}\n", i, ker_sum);
-    //         let (lat, lon) = rec.get_lat_lon();
-    //         let record = NaiveRecord(lat, lon, ker_sum * 10.0); //"lat","lon","weight"
-    //         wtr.encode(record);
-    //     }
-    // }
-
+    let range_records = tree.range((Included(&bound_time), Included(&curr_time))); // Filter records in range
+    /*********************KERNEL DENSITY ESTIMATION***************************/
     let mut output = File::create("../frontend/heatmap.js").expect("Error");
     output
         .write_all(b"function getPoints() {
@@ -34,22 +26,23 @@ fn main() {
         .expect("Error writing first part");
 
     let mut first = true;
-    for rec in &records {
-        let ker_sum = kernel::kernel_sum(&rec, &curr_time);
-        if ker_sum > 0.4 {
-            // THRESHOLD
+    for (_, rec) in range_records {
+        let ker_sum = kernel::kernel_sum(rec, &curr_time);
+        if ker_sum > threshold {
+            let (lat, lon) = rec.get_lat_lon();
+            
             if !first {
                 write!(output, ",\n\t\t").expect("Error in line break");
             } else {
                 first = false;
             }
 
-            let (lat, lon) = rec.get_lat_lon();
             write!(output,
                    "{{ location: new google.maps.LatLng({}, {}), weight: {} }}",
                    lat,
                    lon,
-                   ker_sum).expect("Error writing record");
+                   ker_sum)
+                    .expect("Error writing record");
         }
     }
 
@@ -62,6 +55,6 @@ heatmap = new google.maps.visualization.HeatmapLayer({
     map: map
 });")
         .expect("Error writing third part");
-
+    /************************************************************************/
     println!("Hello world!");
 }
