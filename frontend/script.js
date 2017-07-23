@@ -42,16 +42,16 @@ function initMap() {
     infowindow = new google.maps.InfoWindow();
 
     map.data.addListener('click', function (event) {
-        var myHTML = event.feature.getProperty("Description");
+        var myHTML = event.feature.getProperty("description");
         infowindow.setContent("<div style='width:190px; text-align: center;'>" + myHTML + "</div>");
         infowindow.setPosition(event.feature.getGeometry().get());
-        infowindow.setOptions({ pixelOffset: new google.maps.Size(0, -10) });
+        infowindow.setOptions({ pixelOffset: new google.maps.Size(0, -1) });
         infowindow.open(map);
     });
 
     map.data.addListener('mouseover', function (event) {
         document.getElementById('info-box').textContent =
-            event.feature.getProperty('Description');
+            event.feature.getProperty('crime_type');
     });
 
     // map.addListener('zoom_changed', function () {

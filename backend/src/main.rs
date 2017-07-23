@@ -78,8 +78,11 @@ fn main() {
 
     for record in &geo_records {
         let mut properties = Map::new();
-        properties.insert("Description".to_string(),
+
+        properties.insert("description".to_string(),
                           value::Value::String(record.get_description()));
+        properties.insert("crime_type".to_string(),
+                          value::Value::String(record.get_crime_type()));
 
         let (lat, lon) = record.get_lat_lon();
 

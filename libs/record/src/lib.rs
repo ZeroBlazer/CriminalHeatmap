@@ -81,6 +81,7 @@ pub struct GeoRecord {
     occur_date: String,
     occur_time: String,
     location: String,
+    crime_type: String,
     kde: f64,
 }
 
@@ -93,6 +94,7 @@ impl GeoRecord {
             day_week: rec.values[16].clone(),
             occur_date: rec.values[3].clone(),
             occur_time: rec.values[4].clone(),
+            crime_type: rec.values[18].clone(),
             kde: 0.0,
         }
     }
@@ -106,13 +108,15 @@ impl GeoRecord {
     }
 
     pub fn get_description(&self) -> String {
-        format!("Dir:\t{}<br>
-                 Date:\t{}, {} @ {}<br>
-                 Relev:\t{:.3}",
+        format!("<h3>{}</h3>{}, {} @ {}<br>Relevancia: {:.3}",
                 self.location,
                 self.day_week,
                 self.occur_date,
                 self.occur_time,
                 self.kde)
+    }
+
+    pub fn get_crime_type(&self) -> String {
+        self.crime_type.clone()
     }
 }
