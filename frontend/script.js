@@ -2,7 +2,7 @@
 // parameter when you first load the API. For example:
 // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=visualization">
 
-var map, heatmap;
+var map, infowindow, heatmap, gradient;
 
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
@@ -11,16 +11,11 @@ function initMap() {
         mapTypeId: 'roadmap'
     });
 
-    map.data.setStyle({
-        fillColor: 'green',
-        strokeWeight: 1
-    });
-
     var script = document.createElement('script');
     script.src = './heatmap.js';
     document.getElementsByTagName('head')[0].appendChild(script);
 
-    var gradient = [
+    gradient = [
         'rgba(0, 255, 255, 0)',
         'rgba(0, 255, 255, 1)',
         'rgba(0, 191, 255, 1)',
@@ -36,47 +31,53 @@ function initMap() {
         'rgba(191, 0, 31, 1)',
         'rgba(255, 0, 0, 1)'
     ]
-    heatmap.set('gradient', gradient);
+
+    map.data.setStyle({
+        fillColor: 'green',
+        strokeWeight: 1,
+        icon: 'https://chart.googleapis.com/chart?chst=d_simple_text_icon_left&chld=|12|F00|glyphish_location|12|000|FFF',
+        pixelOffset: new google.maps.Size(6, 6)
+    });
+
+    infowindow = new google.maps.InfoWindow();
+
+    map.data.addListener('click', function (event) {
+        var myHTML = event.feature.getProperty("Description");
+        infowindow.setContent("<div style='width:190px; text-align: center;'>" + myHTML + "</div>");
+        infowindow.setPosition(event.feature.getGeometry().get());
+        infowindow.setOptions({ pixelOffset: new google.maps.Size(0, -10) });
+        infowindow.open(map);
+    });
+
+    map.data.addListener('mouseover', function (event) {
+        document.getElementById('info-box').textContent =
+            event.feature.getProperty('Description');
+    });
+
+    // map.addListener('zoom_changed', function () {
+    //     if (map.zoom < 12) {
+    //         map.data.setStyle({
+    //             visibile: false
+    //         });
+    //     } else {
+    //         map.data.setStyle({
+    //             visibile: true
+    //         });
+    //     }
+    // });
+
+    map.data.loadGeoJson("./geo.json");
+
 }
 
 function toggleHeatmap() {
     heatmap.setMap(heatmap.getMap() ? null : map);
 }
 
-// function changeGradient() {
-//     var gradient = [
-//         'rgba(0, 255, 255, 0)',
-//         'rgba(0, 255, 255, 1)',
-//         'rgba(0, 191, 255, 1)',
-//         'rgba(0, 127, 255, 1)',
-//         'rgba(0, 63, 255, 1)',
-//         'rgba(0, 0, 255, 1)',
-//         'rgba(0, 0, 223, 1)',
-//         'rgba(0, 0, 191, 1)',
-//         'rgba(0, 0, 159, 1)',
-//         'rgba(0, 0, 127, 1)',
-//         'rgba(63, 0, 91, 1)',
-//         'rgba(127, 0, 63, 1)',
-//         'rgba(191, 0, 31, 1)',
-//         'rgba(255, 0, 0, 1)'
-//     ]
-//     heatmap.set('gradient', heatmap.get('gradient') ? null : gradient);
-// }
-
 function changeRadius() {
-    heatmap.set('radius', heatmap.get('radius') ? null : 20);
+    heatmap.set('radius', heatmap.get('radius') ? null : 17);
 }
 
 function changeOpacity() {
     heatmap.set('opacity', heatmap.get('opacity') ? null : 0.2);
 }
-
-// function getPoints() {
-//     // var records = 
-//     // console.log(records);
-//     return [
-//         new google.maps.LatLng(37.782551, -122.445368),
-//         new google.maps.LatLng(37.782745, -122.444586),
-//         new google.maps.LatLng(37.782842, -122.443688),
-//         new google.maps.LatLng(37.782919, -122.442815)];
-// }

@@ -4,7 +4,6 @@ extern crate chrono;
 extern crate cogset;
 
 use quick_csv::Csv;
-// use std::io::{self, Write, Read};
 use chrono::{NaiveDate, NaiveDateTime};
 use cogset::Point;
 use std::str::FromStr;
@@ -72,4 +71,48 @@ pub fn read_records_from(path: &str) -> Vec<Record> {
     }
 
     vec
+}
+
+#[derive(Debug)]
+pub struct GeoRecord {
+    lat: f64,
+    lon: f64,
+    day_week: String,
+    occur_date: String,
+    occur_time: String,
+    location: String,
+    kde: f64,
+}
+
+impl GeoRecord {
+    pub fn from_record(rec: &Record) -> GeoRecord {
+        GeoRecord {
+            lon: rec.values[21].parse::<f64>().unwrap(),
+            lat: rec.values[22].parse::<f64>().unwrap(),
+            location: rec.values[10].clone(),
+            day_week: rec.values[16].clone(),
+            occur_date: rec.values[3].clone(),
+            occur_time: rec.values[4].clone(),
+            kde: 0.0,
+        }
+    }
+
+    pub fn set_kde(&mut self, kde: f64) {
+        self.kde = kde;
+    }
+
+    pub fn get_lat_lon(&self) -> (f64, f64) {
+        (self.lat, self.lon)
+    }
+
+    pub fn get_description(&self) -> String {
+        format!("Dir:\t{}<br>
+                 Date:\t{}, {} @ {}<br>
+                 Relev:\t{:.3}",
+                self.location,
+                self.day_week,
+                self.occur_date,
+                self.occur_time,
+                self.kde)
+    }
 }

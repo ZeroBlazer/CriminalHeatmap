@@ -7,3 +7,6 @@ authors = ["Elías Puma <elpumitaelias@gmail.com>"]
 record = { path = "../libs/record/" }
 kernel = { path = "../libs/kernel/" }
 clustering = { path = "../libs/clustering/" }
+cogset = "0.2"
+geojson = "*"
+serde_json = "*"

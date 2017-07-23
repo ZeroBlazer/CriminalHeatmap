@@ -1,14 +1,23 @@
 extern crate record;
 extern crate kernel;
 extern crate clustering;
+extern crate cogset;
+extern crate geojson;
+extern crate serde_json;
 
 use std::collections::Bound::Included;
 use std::io::prelude::*;
 use std::fs::File;
+use cogset::{Dbscan, BruteScan, Euclid};
+use geojson::{Feature, FeatureCollection, GeoJson, Geometry, Value};
+use serde_json::map::Map;
+use serde_json::value;
+use record::GeoRecord;
 
 fn main() {
-    let week_range = 90;
-    let threshold = 0.4;
+    let week_range = 20;
+    let kde_threshold = 0.4;
+    let geo_threshold = 0.75;
     /*****************************LOAD RECORDS*******************************/
     let records = record::read_records_from("../data/data1617.csv"); // Load records
     let tree = clustering::make_record_tree(&records); // Store records in a BTree
@@ -18,43 +27,95 @@ fn main() {
 
     let range_records = tree.range((Included(&bound_time), Included(&curr_time))); // Filter records in range
     /*********************KERNEL DENSITY ESTIMATION***************************/
-    let mut output = File::create("../frontend/heatmap.js").expect("Error");
-    output
+    let mut kde_out = File::create("../frontend/heatmap.js").expect("Error");
+    kde_out
         .write_all(b"function getPoints() {
-    return [
-        ")
+        return [
+            ")
         .expect("Error writing first part");
+
+    let mut geo_records = Vec::new();
 
     let mut first = true;
     for (_, rec) in range_records {
         let ker_sum = kernel::kernel_sum(rec, &curr_time);
-        if ker_sum > threshold {
+        if ker_sum > kde_threshold {
             let (lat, lon) = rec.get_lat_lon();
-            
+
+            if ker_sum > geo_threshold {
+                let mut geo_record = GeoRecord::from_record(rec);
+                geo_record.set_kde(ker_sum);
+                geo_records.push(geo_record);
+            }
+
             if !first {
-                write!(output, ",\n\t\t").expect("Error in line break");
+                write!(kde_out, ",\n\t\t").expect("Error in line break");
             } else {
                 first = false;
             }
 
-            write!(output,
+            write!(kde_out,
                    "{{ location: new google.maps.LatLng({}, {}), weight: {} }}",
                    lat,
                    lon,
-                   ker_sum)
+                   (ker_sum - kde_threshold) * (15.0 / (1.0 - kde_threshold)))
                     .expect("Error writing record");
         }
     }
 
-    output
+    kde_out
         .write_all(b"    ];
-}
+    }
 
-heatmap = new google.maps.visualization.HeatmapLayer({
-    data: getPoints(),
-    map: map
-});")
+    heatmap = new google.maps.visualization.HeatmapLayer({
+        data: getPoints(),
+        map: map,
+        gradient: gradient
+    });")
         .expect("Error writing third part");
+    /************************************************************************/
+    let mut features = Vec::new();
+
+    for record in &geo_records {
+        let mut properties = Map::new();
+        properties.insert("Description".to_string(),
+                          value::Value::String(record.get_description()));
+
+        let (lat, lon) = record.get_lat_lon();
+
+        let geojson = Feature {
+            bbox: None,
+            geometry: Some(Geometry::new(Value::Point(vec![lon, lat]))),
+            foreign_members: None,
+            id: None,
+            properties: Some(properties),
+        };
+
+        features.push(geojson);
+    }
+
+    let feature_collection = GeoJson::FeatureCollection(FeatureCollection {
+                                                            bbox: None,
+                                                            foreign_members: None,
+                                                            features: features,
+                                                        });
+
+    let mut geo_out = File::create("../frontend/geo.json").expect("Error creating file");
+    write!(geo_out, "{}", feature_collection).expect("Error writing geo info");
+    /*******************************CLUSTERING*******************************/
+    // let query_records: Vec<record::Record> = range_records.map(|(_, &r)| r.clone()).collect(); // Vec containing cloned query records
+    // let scanner = BruteScan::new(&query_records);
+    // let mut dbscan = Dbscan::new(scanner, 0.01, 5);
+
+    // let clusters = dbscan.by_ref().collect::<Vec<_>>();
+
+    // for (i, cluster) in clusters.iter().enumerate() {
+    //     println!("\nCLUSTER {}>", i);
+    //     for elem_idx in cluster {
+    //         println!("- {:?}", query_records[*elem_idx].get_lat_lon());
+    //     }
+    // }
+    // println!("{:#?}", clusters);
     /************************************************************************/
     println!("Hello world!");
 }
