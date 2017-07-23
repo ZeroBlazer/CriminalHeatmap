@@ -8,14 +8,14 @@ extern crate serde_json;
 use std::collections::Bound::Included;
 use std::io::prelude::*;
 use std::fs::File;
-use cogset::{Dbscan, BruteScan, Euclid};
+use cogset::{Dbscan, Optics, BruteScan, Euclid};
 use geojson::{Feature, FeatureCollection, GeoJson, Geometry, Value};
 use serde_json::map::Map;
 use serde_json::value;
 use record::GeoRecord;
 
 fn main() {
-    let week_range = 20;
+    let week_range = 104;
     let kde_threshold = 0.4;
     let geo_threshold = 0.75;
     /*****************************LOAD RECORDS*******************************/
@@ -105,20 +105,6 @@ fn main() {
 
     let mut geo_out = File::create("../frontend/geo.json").expect("Error creating file");
     write!(geo_out, "{}", feature_collection).expect("Error writing geo info");
-    /*******************************CLUSTERING*******************************/
-    // let query_records: Vec<record::Record> = range_records.map(|(_, &r)| r.clone()).collect(); // Vec containing cloned query records
-    // let scanner = BruteScan::new(&query_records);
-    // let mut dbscan = Dbscan::new(scanner, 0.01, 5);
-
-    // let clusters = dbscan.by_ref().collect::<Vec<_>>();
-
-    // for (i, cluster) in clusters.iter().enumerate() {
-    //     println!("\nCLUSTER {}>", i);
-    //     for elem_idx in cluster {
-    //         println!("- {:?}", query_records[*elem_idx].get_lat_lon());
-    //     }
-    // }
-    // println!("{:#?}", clusters);
     /************************************************************************/
     println!("Hello world!");
 }
