@@ -25,23 +25,27 @@ fn main() {
 
     let clusters = dbscan.by_ref().collect::<Vec<_>>();
     /**********************************************************/
+    let mut features = Vec::new();
+    
     for (i, cluster) in clusters.iter().enumerate() {
         println!("\nCLUSTER {}>", i);
+        
+        let mut properties = Map::new();
+        properties.insert("crime_type".to_string(),
+                          value::Value::String(record.get_crime_type()));
+        
         for elem_idx in cluster {
             println!("- {:?}", query_records[*elem_idx].get_lat_lon());
         }
     }
     println!("{:#?}", clusters);
     /**********************************************************/
-    let mut features = Vec::new();
 
     for record in &geo_records {
         let mut properties = Map::new();
 
         properties.insert("description".to_string(),
                           value::Value::String(record.get_description()));
-        properties.insert("crime_type".to_string(),
-                          value::Value::String(record.get_crime_type()));
 
         let (lat, lon) = record.get_lat_lon();
 
