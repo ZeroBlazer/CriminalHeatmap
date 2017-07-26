@@ -83,6 +83,7 @@ pub struct GeoRecord {
     location: String,
     crime_type: String,
     kde: f64,
+    // group_cluster: usize,
 }
 
 impl GeoRecord {
@@ -95,7 +96,8 @@ impl GeoRecord {
             occur_date: rec.values[3].clone(),
             occur_time: rec.values[4].clone(),
             crime_type: rec.values[18].clone(),
-            kde: 0.0,
+            kde: 0.0
+            // group_cluster: 0
         }
     }
 
@@ -118,5 +120,26 @@ impl GeoRecord {
 
     pub fn get_crime_type(&self) -> String {
         self.crime_type.clone()
+    }
+
+    // pub fn set_group_cluster(&mut self, cluster: usize) {
+    //     self.group_cluster = cluster;
+    // }
+}
+
+impl Point for GeoRecord {
+    fn dist(&self, other: &GeoRecord) -> f64 {
+        let mut distance = (self.lat - other.lat).powf(2.0);
+        distance += (self.lon - other.lon).powf(2.0);
+
+        let sim_factor = if self.crime_type == other.crime_type {
+            0.5
+        } else {
+            0.0
+        };
+
+        distance /= (self.kde + sim_factor);
+
+        distance.sqrt()
     }
 }
