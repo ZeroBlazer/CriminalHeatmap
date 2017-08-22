@@ -138,7 +138,7 @@ impl Point for GeoRecord {
             0.0
         };
 
-        distance /= (self.kde + sim_factor);
+        distance /= self.kde + sim_factor;
 
         distance.sqrt()
     }
